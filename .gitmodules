@@ -1,0 +1,15 @@
+[submodule "skills/anthropic-official"]
+	path = skills/anthropic-official
+	url = https://github.com/anthropics/skills.git
+[submodule "skills/alirezarezvani-collection"]
+	path = skills/alirezarezvani-collection
+	url = https://github.com/alirezarezvani/claude-skills.git
+[submodule "skills/jeffallan-collection"]
+	path = skills/jeffallan-collection
+	url = https://github.com/jeffallan/claude-skills.git
+[submodule "skills/glebis-collection"]
+	path = skills/glebis-collection
+	url = https://github.com/glebis/claude-skills.git
+[submodule "skills/cybersecurity-collection"]
+	path = skills/cybersecurity-collection
+	url = https://github.com/mukul975/Anthropic-Cybersecurity-Skills.git
