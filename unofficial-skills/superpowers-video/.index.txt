@@ -1,0 +1,18 @@
+# Superpowers Video Skills
+
+## Entry Point
+- using-video-superpowers - Start here for any video work
+
+## Phase 1: Planning
+- video-brainstorming - Create video outline and visual direction
+
+## Phase 2: Production & Export
+- video-script - Write detailed script with scenes, visuals, subtitles, and effects
+- script-to-jianying - Convert script to Jianying project format
+
+## Workflow Order
+1. using-video-superpowers (understand workflow)
+2. video-brainstorming (create outline)
+3. video-script --export-jianying (write script with segment mapping)
+4. script-to-jianying (convert to Jianying project)
+5. Open in JianyingPro for final adjustments and export
