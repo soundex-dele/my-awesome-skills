@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体AI工坊 - 几何Logo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 800px;
+            height: 600px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+        }
+
+        .logo-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #canvas {
+            width: 280px;
+            height: 280px;
+        }
+
+        .title {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            font-size: 42px;
+            font-weight: 300;
+            color: #ffffff;
+            letter-spacing: 12px;
+            margin-top: -70px;
+            opacity: 0;
+            animation: titleExpand 1s ease-out 1.8s forwards;
+        }
+
+        @keyframes titleExpand {
+            0% {
+                opacity: 0;
+                letter-spacing: 0px;
+            }
+            100% {
+                opacity: 1;
+                letter-spacing: 12px;
+            }
+        }
+
+        .subtitle {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            color: #ffffff;
+            letter-spacing: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            animation: subtitleFade 0.8s ease-out 2.4s forwards;
+        }
+
+        @keyframes subtitleFade {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 0.6;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <canvas id="canvas" width="560" height="560"></canvas>
+        <div class="title">智能体AI工坊</div>
+        <!-- <div class="subtitle">AGENT AI STUDIO</div> -->
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const color = '#000000';
+        const animations = [];
+        let startTime = null;
+
+        // 绘制多边形
+        function drawPolygon(x, y, radius, sides, delay, duration) {
+            animations.push({
+                type: 'polygon',
+                x, y, radius, sides,
+                delay, duration,
+                progress: 0
+            });
+        }
+
+        // 绘制多边形边
+        function drawPolygonEdge(x, y, radius, sides, edgeIndex, delay, duration) {
+            animations.push({
+                type: 'polygonEdge',
+                x, y, radius, sides, edgeIndex,
+                delay, duration,
+                progress: 0
+            });
+        }
+
+        // 绘制分割线
+        function drawLine(x1, y1, x2, y2, delay, duration) {
+            animations.push({
+                type: 'line',
+                x1, y1, x2, y2,
+                delay, duration,
+                progress: 0
+            });
+        }
+
+        // 绘制点
+        function drawDot(x, y, radius, delay, duration) {
+            animations.push({
+                type: 'dot',
+                x, y, radius,
+                delay, duration: duration || 200,
+                progress: 0
+            });
+        }
+
+        // 初始化几何图形
+        function init() {
+            const cx = 280, cy = 280;
+            const sides = 6; // 六边形
+
+            // 第一个六边形 - 从中心扩展
+            drawPolygon(cx, cy, 120, sides, 0, 800);
+
+            // 第二个六边形
+            drawPolygon(cx, cy, 80, sides, 400, 600);
+
+            // 第三个六边形 - 分边绘制
+            for (let i = 0; i < sides; i++) {
+                drawPolygonEdge(cx, cy, 140, sides, i, 1000 + i * 80, 250);
+            }
+
+            // 分割线 - 从中心向顶点
+            for (let i = 0; i < sides; i++) {
+                const angle = i * Math.PI * 2 / sides - Math.PI / 2;
+                const x1 = cx + Math.cos(angle) * 80;
+                const y1 = cy + Math.sin(angle) * 80;
+                const x2 = cx + Math.cos(angle) * 120;
+                const y2 = cy + Math.sin(angle) * 120;
+                drawLine(x1, y1, x2, y2, 1200 + i * 50, 200);
+            }
+
+            // 中心点
+            drawDot(cx, cy, 6, 800, 300);
+
+            // 外圈装饰点 - 六边形顶点
+            for (let i = 0; i < sides; i++) {
+                const angle = i * Math.PI * 2 / sides - Math.PI / 2;
+                const x = cx + Math.cos(angle) * 140;
+                const y = cy + Math.sin(angle) * 140;
+                drawDot(x, y, 4, 1500 + i * 50, 150);
+            }
+        }
+
+        // 渲染
+        function render(elapsed) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            animations.forEach(anim => {
+                if (elapsed >= anim.delay) {
+                    anim.progress = Math.min(1, (elapsed - anim.delay) / anim.duration);
+                }
+
+                if (anim.progress > 0) {
+                    drawAnimElement(anim);
+                }
+            });
+        }
+
+        function drawAnimElement(anim) {
+            const p = anim.progress;
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+
+            switch (anim.type) {
+                case 'polygon':
+                    // 绘制多边形 - 逐边绘制
+                    const totalEdges = anim.sides;
+                    const progress = p * totalEdges;
+                    const fullEdges = Math.floor(progress);
+                    const partialProgress = progress - fullEdges;
+
+                    ctx.beginPath();
+                    for (let i = 0; i <= fullEdges; i++) {
+                        const angle1 = (i * Math.PI * 2 / anim.sides) - Math.PI / 2;
+                        const x1 = anim.x + Math.cos(angle1) * anim.radius;
+                        const y1 = anim.y + Math.sin(angle1) * anim.radius;
+
+                        if (i === 0) {
+                            ctx.moveTo(x1, y1);
+                        } else {
+                            ctx.lineTo(x1, y1);
+                        }
+
+                        // 绘制部分边
+                        if (i === fullEdges && partialProgress > 0) {
+                            const angle2 = ((i + 1) * Math.PI * 2 / anim.sides) - Math.PI / 2;
+                            const x2 = anim.x + Math.cos(angle2) * anim.radius;
+                            const y2 = anim.y + Math.sin(angle2) * anim.radius;
+                            const px = x1 + (x2 - x1) * partialProgress;
+                            const py = y1 + (y2 - y1) * partialProgress;
+                            ctx.lineTo(px, py);
+                        }
+                    }
+                    ctx.stroke();
+                    break;
+
+                case 'polygonEdge':
+                    // 绘制单条多边形边
+                    const angle1 = (anim.edgeIndex * Math.PI * 2 / anim.sides) - Math.PI / 2;
+                    const angle2 = ((anim.edgeIndex + 1) * Math.PI * 2 / anim.sides) - Math.PI / 2;
+                    const startX = anim.x + Math.cos(angle1) * anim.radius;
+                    const startY = anim.y + Math.sin(angle1) * anim.radius;
+                    const endX = anim.x + Math.cos(angle2) * anim.radius;
+                    const endY = anim.y + Math.sin(angle2) * anim.radius;
+                    const currentX = startX + (endX - startX) * p;
+                    const currentY = startY + (endY - startY) * p;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(currentX, currentY);
+                    ctx.stroke();
+                    break;
+
+                case 'line':
+                    const lx = anim.x1 + (anim.x2 - anim.x1) * p;
+                    const ly = anim.y1 + (anim.y2 - anim.y1) * p;
+                    ctx.beginPath();
+                    ctx.moveTo(anim.x1, anim.y1);
+                    ctx.lineTo(lx, ly);
+                    ctx.stroke();
+                    break;
+
+                case 'dot':
+                    ctx.beginPath();
+                    ctx.arc(anim.x, anim.y, anim.radius * p, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+            }
+        }
+
+        // 动画循环
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+
+            render(elapsed);
+
+            if (elapsed < 3000) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // 启动
+        init();
+        requestAnimationFrame(animate);
+
+        // Puppeteer 接口
+        window.seekTo = function(time) {
+            const ms = time * 1000;
+            render(ms);
+            return time;
+        };
+
+        window.getTotalDuration = function() {
+            return 3;
+        };
+
+        console.log('Animation loaded. Total duration: 3s');
+    </script>
+</body>
+</html>

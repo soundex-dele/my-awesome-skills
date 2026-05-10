@@ -1,232 +1,232 @@
 ---
 name: html-card-generator
-description: Use when user needs HTML animation cards for social media videos, storyboard sequences, or video content with animated text/graphics that integrate with jianying-editor workflow
+description: 当用户需要为社交媒体视频、分镜序列或带有动画文本/图形的视频内容生成HTML动画卡片，并与jianying-editor工作流集成时使用
 ---
 
-# HTML Card Generator
+# HTML卡片生成器
 
-## Overview
+## 概述
 
-Generate production-ready HTML animation card sequences for social media videos. Each card is a self-contained HTML file with CSS animations and JavaScript, compatible with jianying-editor's web-vfx system for video recording.
+为社交媒体视频生成可直接用于生产的HTML动画卡片序列。每张卡片都是一个包含CSS动画和JavaScript的独立HTML文件，与剪映编辑器(jianying-editor)的web-vfx系统兼容，可用于视频录制。
 
-**Core principle:** Transform user requirements (storyboard + style description) into executable HTML animations without manual HTML/CSS/JS coding.
+**核心原则：** 将用户需求（分镜+风格描述）转换为可执行的HTML动画，无需手动编写HTML/CSS/JS代码。
 
-## When to Use
+## 使用时机
 
 ```
-User needs video content? → Animated cards involved? → Social media format? → Use this skill
-        ↓                        ↓                           ↓
-   Product demo            Text animations          Douyin/TikTok
-   Tutorial                Motion graphics          Short videos
-   Presentation            Scene transitions        Mobile-first
+用户需要视频内容？→ 涉及动画卡片？→ 社交媒体格式？→ 使用此技能
+        ↓                ↓                   ↓
+    产品演示          文字动画            抖音/TikTok
+    教程              动态图形            短视频
+    演示文稿          场景转换            移动端优先
 ```
 
-**Use this skill when:**
-- User mentions "video cards", "HTML animations", "motion graphics"
-- User provides storyboard or scene-by-scene breakdown
-- Target platform is social media (Douyin, TikTok, Instagram Reels)
-- Output needs to integrate with jianying-editor
-- User wants animated text/graphic sequences
+**适用场景：**
+- 用户提到"视频卡片"、"HTML动画"、"动态图形"
+- 用户提供分镜或场景分解
+- 目标平台是社交媒体（抖音、TikTok、Instagram Reels）
+- 输出需要与剪映编辑器集成
+- 用户需要动画文本/图形序列
 
-**Don't use for:**
-- Static image slides (use simpler tools)
-- Complex 3D scenes (use specialized 3D tools)
-- Live-action video footage (this is for overlay content)
+**不适用于：**
+- 静态图片幻灯片（使用更简单的工具）
+- 复杂3D场景（使用专业3D工具）
+- 实拍视频素材（这是用于叠加内容）
 
-## Workflow
+## 工作流程
 
-### Step 1: Parse User Requirements
+### 步骤1：解析用户需求
 
-Extract from user input:
-- **Storyboard**: Scene-by-scene content breakdown
-- **Style**: Visual aesthetic (tech, minimal, vibrant, etc.)
-- **Orientation**: Landscape (1920x1080) or Portrait (1080x1920)
-- **Duration**: Per-scene timing (default 3-5 seconds)
+从用户输入中提取：
+- **分镜**：逐场景内容分解
+- **风格**：视觉美学（科技、简约、活力等）
+- **方向**：横屏（1920x1080）或竖屏（1080x1920）
+- **时长**：每场景时间（默认3-5秒）
 
-### Step 2: Select Style Template
+### 步骤2：选择风格模板
 
-Choose from **8 preset styles** (see Style Library below) or infer from user description:
-- Keywords: "modern", "clean" → `minimal`
-- Keywords: "tech", "digital", "AI" → `tech`
-- Keywords: "fun", "energetic" → `vibrant`
-- etc.
+从**8种预设风格**中选择（见下方风格库）或从用户描述推断：
+- 关键词："现代"、"简洁" → `minimal`
+- 关键词："科技"、"数字"、"AI" → `tech`
+- 关键词："有趣"、"活力" → `vibrant`
+- 等等
 
-### Step 3: Generate Scene Cards
+### 步骤3：生成场景卡片
 
-For each scene in storyboard:
-1. Determine scene type (cover, content, features, quote, code, cta, ending)
-2. Apply style template (colors, typography, animation patterns)
-3. Generate complete HTML with embedded CSS/JS
-4. Ensure animation contract compliance (see Animation Rules)
+对分镜中的每个场景：
+1. 确定场景类型（封面、内容、特性、引用、代码、号召、结尾）
+2. 应用风格模板（颜色、排版、动画模式）
+3. 生成包含内嵌CSS/JS的完整HTML
+4. 确保符合动画规范（见动画规则）
 
-### Step 4: Output File Sequence
+### 步骤4：输出文件序列
 
-Generate files with naming convention: `card_{序号:02d}_{场景类型}.html`
+按命名规范生成文件：`card_{序号:02d}_{场景类型}.html`
 
-## Style Library
+## 风格库
 
-| Style | Colors (CSS variables) | Visual Features | Best For |
+| 风格 | 颜色（CSS变量） | 视觉特征 | 适用场景 |
 |-------|------------------------|-----------------|----------|
-| **tech** | `--primary: #00f2fe`, `--secondary: #4facfe` | Glassmorphism, pulse animations, grid backgrounds | Tech products, AI tools, software demos |
-| **minimal** | `--bg: #ffffff`, `--text: #1a1a1a`, `--accent: #333333` | Clean typography, fade transitions, generous whitespace | Luxury brands, art content, professional presentations |
-| **vibrant** | `--primary: #ff6b6b`, `--secondary: #ffc04d`, `--accent: #6c5ce7` | Bounce animations, high contrast, gradient overlays | Entertainment, youth content, lifestyle |
-| **business** | `--primary: #2c3e50`, `--secondary: #3498db` | Structured layouts, slide animations, professional icons | Corporate presentations, B2B marketing, training |
-| **retro** | `--primary: #e67e22`, `--secondary: #d35400`, `--bg: #f5e6d3` | Vintage fonts, film grain effects, classic borders | Nostalgic themes, classic products, throwback content |
-| **cute** | `--primary: #ffb6b9`, `--secondary: #feca57`, `--accent: #ff9ff3` | Rounded corners, elastic animations, playful icons | Kids content, pets, lifestyle, parenting |
-| **premium** | `--primary: #c0c0c0`, `--gold: #d4af37`, `--bg: #1a1a1a` | Metallic gradients, shine effects, elegant typography | Luxury goods, high-end services, exclusive offers |
-| **dark** | `--bg: #0a0a0a`, `--primary: #00ff88`, `--accent: #ff00ff` | Neon glow effects, cyber elements, high contrast | Gaming, eSports, nightlife, tech |
+| **tech** | `--primary: #00f2fe`, `--secondary: #4facfe` | 玻璃拟态、脉冲动画、网格背景 | 科技产品、AI工具、软件演示 |
+| **minimal** | `--bg: #ffffff`, `--text: #1a1a1a`, `--accent: #333333` | 简洁排版、淡入过渡、充足留白 | 奢侈品牌、艺术内容、专业演示 |
+| **vibrant** | `--primary: #ff6b6b`, `--secondary: #ffc04d`, `--accent: #6c5ce7` | 弹跳动画、高对比度、渐变叠加 | 娱乐、青年内容、生活方式 |
+| **business** | `--primary: #2c3e50`, `--secondary: #3498db` | 结构化布局、滑动动画、专业图标 | 企业演示、B2B营销、培训 |
+| **retro** | `--primary: #e67e22`, `--secondary: #d35400`, `--bg: #f5e6d3` | 复古字体、胶片颗粒效果、经典边框 | 怀旧主题、经典产品、复古内容 |
+| **cute** | `--primary: #ffb6b9`, `--secondary: #feca57`, `--accent: #ff9ff3` | 圆角、弹性动画、可爱图标 | 儿童内容、宠物、生活方式、育儿 |
+| **premium** | `--primary: #c0c0c0`, `--gold: #d4af37`, `--bg: #1a1a1a` | 金属渐变、光泽效果、优雅排版 | 奢侈品、高端服务、独家优惠 |
+| **dark** | `--bg: #0a0a0a`, `--primary: #00ff88`, `--accent: #ff00ff` | 霓虹发光效果、赛博元素、高对比度 | 游戏、电竞、夜生活、科技 |
 
-## Scene Types & Templates
+## 场景类型与模板
 
 ### 1. cover - 封面/片头
 
-**Purpose:** Opening title card with main heading and subtitle
+**用途：** 带有主标题和副标题的开场标题卡片
 
-**Structure:**
+**结构：**
 ```html
 <div class="cover-container">
-  <div class="tag-line">[Tag/Category]</div>
-  <h1 class="main-title">[Main Title]</h1>
-  <p class="subtitle">[Subtitle/Description]</p>
+  <div class="tag-line">[标签/分类]</div>
+  <h1 class="main-title">[主标题]</h1>
+  <p class="subtitle">[副标题/描述]</p>
   <div class="decoration"></div>
 </div>
 ```
 
-**Animation:** Title scale-in, subtitle fade-up, decoration pulse
+**动画：** 标题缩放进入、副标题淡入上移、装饰元素脉冲
 
 ### 2. content - 内容页
 
-**Purpose:** Informational content with heading and body text
+**用途：** 带有标题和正文的信息内容
 
-**Structure:**
+**结构：**
 ```html
 <div class="content-container">
-  <h2 class="section-title">[Section Title]</h2>
+  <h2 class="section-title">[章节标题]</h2>
   <div class="content-body">
-    <p>[Paragraph content]</p>
-    <p>[Additional paragraphs as needed]</p>
+    <p>[段落内容]</p>
+    <p>[根据需要添加更多段落]</p>
   </div>
   <div class="visual-element"></div>
 </div>
 ```
 
-**Animation:** Title slide-in, paragraphs cascade-fade
+**动画：** 标题滑入、段落层叠淡入
 
 ### 3. features - 特性列表
 
-**Purpose:** Grid of feature items with icons and descriptions
+**用途：** 带有图标和描述的功能项网格
 
-**Structure:**
+**结构：**
 ```html
 <div class="features-grid">
   <div class="feature-item">
-    <div class="feature-icon">[Icon/Emoji]</div>
-    <h3 class="feature-title">[Feature Name]</h3>
-    <p class="feature-desc">[Description]</p>
+    <div class="feature-icon">[图标/表情]</div>
+    <h3 class="feature-title">[功能名称]</h3>
+    <p class="feature-desc">[描述]</p>
   </div>
-  <!-- Repeat for each feature (typically 3-4 items) -->
+  <!-- 每个功能重复（通常3-4项） -->
 </div>
 ```
 
-**Animation:** Items stagger-fade-in with scale effect
+**动画：** 项目依次淡入并带缩放效果
 
 ### 4. quote - 金句/引用
 
-**Purpose:** Large centered quote or key message
+**用途：** 居中显示的大号引用或关键信息
 
-**Structure:**
+**结构：**
 ```html
 <div class="quote-container">
   <div class="quote-mark">"</div>
-  <p class="quote-text">[Quote content]</p>
-  <div class="quote-author">— [Author/Source]</div>
+  <p class="quote-text">[引用内容]</p>
+  <div class="quote-author">— [作者/来源]</div>
 </div>
 ```
 
-**Animation:** Text reveal, scale pulsing, author fade-in
+**动画：** 文字揭示、缩放脉冲、作者淡入
 
 ### 5. code - 代码展示
 
-**Purpose:** Display code with syntax highlighting
+**用途：** 带语法高亮的代码显示
 
-**Structure:**
+**结构：**
 ```html
 <div class="code-container">
   <div class="code-header">
-    <span class="lang-tag">[Language]</span>
+    <span class="lang-tag">[语言]</span>
   </div>
-  <pre class="code-block"><code>[Code content]</code></pre>
+  <pre class="code-block"><code>[代码内容]</code></pre>
 </div>
 ```
 
-**Animation:** Typewriter effect or line-by-line reveal
+**动画：** 打字机效果或逐行揭示
 
 ### 6. cta - 号召行动
 
-**Purpose:** Call-to-action with button and prompt
+**用途：** 带有按钮和提示的行动号召
 
-**Structure:**
+**结构：**
 ```html
 <div class="cta-container">
-  <h2 class="cta-title">[Action Prompt]</h2>
-  <p class="cta-subtitle">[Supporting text]</p>
-  <button class="cta-button">[Button Text]</button>
+  <h2 class="cta-title">[行动提示]</h2>
+  <p class="cta-subtitle">[支持文本]</p>
+  <button class="cta-button">[按钮文本]</button>
   <div class="cta-decorations"></div>
 </div>
 ```
 
-**Animation:** Button pulse-in, text bounce, decorations rotate
+**动画：** 按钮脉冲进入、文字弹跳、装饰元素旋转
 
 ### 7. ending - 结尾
 
-**Purpose:** Closing card with thanks and follow prompt
+**用途：** 感谢和关注提示的结束卡片
 
-**Structure:**
+**结构：**
 ```html
 <div class="ending-container">
-  <h2 class="thanks-text">Thank You!</h2>
-  <p class="follow-text">[Follow/Subscribe prompt]</p>
-  <div class="social-icons">[Social media icons/emojis]</div>
+  <h2 class="thanks-text">感谢观看！</h2>
+  <p class="follow-text">[关注/订阅提示]</p>
+  <div class="social-icons">[社交媒体图标/表情]</div>
 </div>
 ```
 
-**Animation:** Heart bounce, icons spin, gentle fade
+**动画：** 爱心弹跳、图标旋转、柔和淡入
 
-## Animation Contract (jianying-editor compatibility)
+## 动画规范（剪映编辑器兼容性）
 
-**CRITICAL:** All generated HTML MUST comply with these rules:
+**关键：** 所有生成的HTML必须遵守以下规则：
 
 ```javascript
-// 1. REQUIRED: Set completion signal when animation finishes
+// 1. 必需：动画结束时设置完成信号
 window.animationFinished = true;
 
-// 2. REQUIRED: Transparent background for video overlay
+// 2. 必需：透明背景用于视频叠加
 body {
   background: transparent;
   margin: 0;
   overflow: hidden;
 }
 
-// 3. Duration: Default 3-5 seconds per card
-const ANIMATION_DURATION = 3000; // ms, adjust per scene
+// 3. 时长：每张卡片默认3-5秒
+const ANIMATION_DURATION = 3000; // 毫秒，按场景调整
 
-// 4. Use requestAnimationFrame for smooth animations
+// 4. 使用requestAnimationFrame实现流畅动画
 requestAnimationFrame(animate);
 
-// 5. OPTIONAL: Load external libraries via CDN
+// 5. 可选：通过CDN加载外部库
 // <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 ```
 
-**File format requirements:**
-- Single file (HTML + CSS + JS inline)
-- UTF-8 encoding
-- No external resources (except CDN libraries)
-- No `alert()` or blocking operations
-- Responsive to orientation (landscape/portrait)
+**文件格式要求：**
+- 单文件（HTML + CSS + JS内联）
+- UTF-8编码
+- 无外部资源（CDN库除外）
+- 不使用`alert()`或阻塞操作
+- 适应方向（横屏/竖屏）
 
-## Size Adaptation
+## 尺寸适配
 
-### Landscape (1920x1080) - Default
+### 横屏（1920x1080）- 默认
 
 ```css
 :root {
@@ -236,11 +236,11 @@ requestAnimationFrame(animate);
 body {
   width: var(--width);
   height: var(--height);
-  font-size: 48px; /* Base font size */
+  font-size: 48px; /* 基础字号 */
 }
 ```
 
-### Portrait (1080x1920)
+### 竖屏（1080x1920）
 
 ```css
 :root {
@@ -250,21 +250,21 @@ body {
 body {
   width: var(--width);
   height: var(--height);
-  font-size: 42px; /* Adjusted for mobile */
+  font-size: 42px; /* 移动端调整 */
 }
-/* Adjust layouts for vertical stacking */
+/* 调整布局以适应垂直堆叠 */
 ```
 
-**Tip:** Use CSS variables and relative units (rem, %, vw/vh) for easier adaptation.
+**提示：** 使用CSS变量和相对单位（rem、%、vw/vh）便于适配。
 
-## Complete Example
+## 完整示例
 
-### User Input
+### 用户输入
 
 ```
 制作一个剪映AI剪辑介绍视频的卡片序列：
 
-故事板：
+分镜：
 1. 封面：标题"剪映AI自动化剪辑"，副标题"让视频创作更简单"
 2. 功能页：展示3个核心功能
    - 智能剪辑 🎬
@@ -275,7 +275,7 @@ body {
 风格：科技感，横屏
 ```
 
-### Generated Output
+### 生成的输出
 
 **card_01_cover.html:**
 
@@ -365,7 +365,7 @@ body {
   <div class="decoration"></div>
 </div>
 <script>
-// Animation completion signal
+// 动画完成信号
 setTimeout(() => {
   window.animationFinished = true;
 }, 3000);
@@ -537,34 +537,34 @@ setTimeout(() => {
 </html>
 ```
 
-## Output Format
+## 输出格式
 
-### File Naming Convention
+### 文件命名规范
 
 ```
 card_{序号:02d}_{场景类型}.html
 
-Examples:
+示例：
 - card_01_cover.html
 - card_02_features.html
 - card_03_ending.html
 ```
 
-### Return Format
+### 返回格式
 
-After generating cards, provide:
+生成卡片后，提供：
 
 ```
-Generated {N} cards:
-{file_list}
+已生成 {N} 张卡片：
+{文件列表}
 
-Usage with jianying-editor:
+与剪映编辑器配合使用：
 ```python
 from jy_wrapper import JyProject
 
-project = JyProject("MyVideo")
+project = JyProject("我的视频")
 
-for i, html_file in enumerate([{files}]):
+for i, html_file in enumerate([{文件列表}]):
     project.add_web_asset_safe(
         html_path=html_file,
         start_time=f"{i * 3}s",
@@ -574,17 +574,17 @@ for i, html_file in enumerate([{files}]):
 project.save()
 ```
 
-## jianying-editor Integration
+## 剪映编辑器集成
 
-Generated HTML cards are **directly compatible** with jianying-editor workflow:
+生成的HTML卡片**直接兼容**剪映编辑器工作流：
 
 ```python
 from jy_wrapper import JyProject
 
-# Create new project
-project = JyProject("SocialMediaVideo")
+# 创建新项目
+project = JyProject("社交媒体视频")
 
-# Batch import cards
+# 批量导入卡片
 cards = [
     "card_01_cover.html",
     "card_02_content.html",
@@ -593,7 +593,7 @@ cards = [
 ]
 
 for i, card in enumerate(cards):
-    # Each card plays for 3-5 seconds
+    # 每张卡片播放3-5秒
     start = f"{i * 3}s"
     project.add_web_asset_safe(
         html_path=card,
@@ -601,27 +601,27 @@ for i, card in enumerate(cards):
         duration="3s"
     )
 
-# Export video
-project.export(output_path="final_video.mp4")
+# 导出视频
+project.export(output_path="最终视频.mp4")
 ```
 
-**Integration benefits:**
-- Automatic recording of HTML animations
-- Transparent background for layering
-- Precise timing control
-- No manual encoding needed
+**集成优势：**
+- 自动录制HTML动画
+- 透明背景便于叠加
+- 精确时间控制
+- 无需手动编码
 
-## Orientation Guidelines
+## 方向指南
 
-### Landscape (横屏 1920×1080)
+### 横屏（1920×1080）
 
-**Key Principles:**
-- Use relative units (`vw`, `vh`, `%`) instead of fixed pixels
+**关键原则：**
+- 使用相对单位（`vw`、`vh`、`%`）而非固定像素
 - Body: `width: 100vw; height: 100vh;`
-- Content padding: `5vh 5vw` for safe margins
-- All fonts, spacing, animations in viewport units
+- 内容内边距：`5vh 5vw` 保持安全边距
+- 所有字体、间距、动画使用视口单位
 
-**Template Structure:**
+**模板结构：**
 ```css
 body {
   width: 100vw;
@@ -636,24 +636,24 @@ body {
   max-height: 90vh;
 }
 
-/* Typography - relative to viewport */
+/* 排版 - 相对于视口 */
 h1 { font-size: 7vw; }
 p { font-size: 2.5vw; }
 ```
 
-**Best Practices:**
-- ✅ Use `vw` for horizontal dimensions
-- ✅ Use `vh` for vertical dimensions
-- ✅ Set `max-width/max-height` on containers
-- ✅ Use `%` for responsive grids
-- ❌ Avoid fixed `px` for dimensions
-- ❌ Avoid hardcoded widths/heights
+**最佳实践：**
+- ✅ 使用`vw`作为水平尺寸
+- ✅ 使用`vh`作为垂直尺寸
+- ✅ 在容器上设置`max-width/max-height`
+- ✅ 使用`%`实现响应式网格
+- ❌ 避免使用固定`px`作为尺寸
+- ❌ 避免硬编码宽度/高度
 
-### Portrait (竖屏 1080×1920)
+### 竖屏（1080×1920）
 
-**Key Challenge:** Vertical content must be rotated -90° for landscape display
+**关键挑战：** 垂直内容必须旋转-90°才能在横屏显示
 
-**Rotation Pattern:**
+**旋转模式：**
 ```css
 body {
   width: 100vw;
@@ -683,81 +683,81 @@ body {
 }
 ```
 
-**⚠️ CRITICAL: Safe Area & Unit Selection**
+**⚠️ 关键：安全区域与单位选择**
 
-**Problem:** After rotating -90°, `vh`/`vw` units calculate against the **wrong viewport axis**, causing content overflow or misalignment. Additionally, short-form video platforms (Douyin, TikTok) reserve ~10% of screen space at top/bottom for UI elements (like/comment buttons).
+**问题：** 旋转-90°后，`vh`/`vw`单位会根据**错误的视口轴**计算，导致内容溢出或错位。此外，短视频平台（抖音、TikTok）会在顶部/底部预留约10%的屏幕空间用于UI元素（点赞/评论按钮）。
 
-**Solution:**
-1. **Reduce max dimensions** to 90% (not 100%) to create safe area
-2. **Use fixed pixels (px)** instead of `vh`/`vw` for consistent sizing after rotation
-3. **Apply fixed padding** (80-100px) rather than viewport-relative padding
+**解决方案：**
+1. **将最大尺寸缩小到90%**（而非100%）以创建安全区域
+2. **使用固定像素（px）** 而非`vh`/`vw`，确保旋转后尺寸一致
+3. **使用固定内边距**（80-100px）而非视口相对内边距
 
-**Correct Pattern:**
+**正确模式：**
 ```css
 .card {
   width: 1080px;
   height: 1920px;
   transform: rotate(-90deg);
-  max-width: 90vh;   /* NOT 100vh - leaves 5% on each side */
-  max-height: 90vw;  /* NOT 100vw - leaves 5% on each side */
-  padding: 80px 60px; /* Fixed pixels, NOT vh/vw */
+  max-width: 90vh;   /* 不是100vh - 两侧各留5% */
+  max-height: 90vw;  /* 不是100vw - 两侧各留5% */
+  padding: 80px 60px; /* 固定像素，不是vh/vw */
 }
 ```
 
-**Critical Settings:**
+**关键设置：**
 
-| Property | Value | Purpose |
+| 属性 | 值 | 用途 |
 |----------|-------|---------|
-| `transform: rotate(-90deg)` | -90deg | Rotate vertical to horizontal |
-| `max-width: 90vh` | 90% of viewport height | **Critical:** Limits width + creates safe area |
-| `max-height: 90vw` | 90% of viewport width | **Critical:** Limits height + creates safe area |
-| `padding: 80px 60px` | Fixed pixels | **Use px NOT vh/vw** for consistent spacing |
-| `overflow: hidden` | hidden | Clip excess content |
+| `transform: rotate(-90deg)` | -90度 | 将垂直旋转为水平 |
+| `max-width: 90vh` | 视口高度的90% | **关键：** 限制宽度 + 创建安全区域 |
+| `max-height: 90vw` | 视口宽度的90% | **关键：** 限制高度 + 创建安全区域 |
+| `padding: 80px 60px` | 固定像素 | **使用px而非vh/vw** 确保间距一致 |
+| `overflow: hidden` | 隐藏 | 裁剪多余内容 |
 
-**Background Handling:**
+**背景处理：**
 ```css
-/* Background fills entire screen */
+/* 背景填充整个屏幕 */
 body {
   background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%);
 }
 
-/* Card background */
+/* 卡片背景 */
 .card {
-  background: transparent; /* Or matching gradient */
+  background: transparent; /* 或匹配的渐变 */
 }
 ```
 
-**Content Layout:**
-- **Use fixed pixels (px)** for all measurements inside card
-- **AVOID vh/vw units** - they calculate incorrectly after rotation
-- Padding: `80px 60px` for portrait-specific spacing
-- Font sizes: `80-100px` for titles, `28-40px` for body text
-- Stack vertically with `flex-direction: column`
+**内容布局：**
+- **在卡片内使用固定像素（px）** 作为所有尺寸
+- **避免使用vh/vw单位** - 旋转后计算错误
+- 内边距：`80px 60px` 用于竖屏特定间距
+- 字号：标题`80-100px`，正文`28-40px`
+- 使用`flex-direction: column`垂直堆叠
 
-**Common Portrait Pitfalls:**
+**常见竖屏陷阱：**
 
-| Issue | Cause | Solution |
+| 问题 | 原因 | 解决方案 |
 |-------|-------|----------|
-| **Content cut off at edges** | `max-width/max-height: 100vh/100vw` leaves no safe area | Use `90vh/90vw` to reserve 10% for platform UI |
-| **VH/VW units misaligned** | After rotation, `vh` measures width, `vw` measures height | Use **fixed pixels (px)** for all sizes, padding, fonts |
-| **Top/bottom content clipped** | Platform UI overlays (like button, comments) | Keep important content within 80% center area |
-| Wrong orientation | Missing rotate | Add `transform: rotate(-90deg)` |
-| Overflow | No size constraints | Add `overflow: hidden` to wrapper |
-| Distorted content | Width/height mismatch | Ensure 1080×1920 base size |
+| **边缘内容被裁剪** | `max-width/max-height: 100vh/100vw` 未留安全区域 | 使用`90vh/90vw`为平台UI预留10% |
+| **VH/VW单位错位** | 旋转后，`vh`测量宽度，`vw`测量高度 | 所有尺寸、内边距、字号**使用固定像素（px）** |
+| **顶部/底部内容被遮挡** | 平台UI叠加（如点赞按钮、评论） | 将重要内容保持在80%中心区域内 |
+| 方向错误 | 缺少旋转 | 添加`transform: rotate(-90deg)` |
+| 溢出 | 无尺寸约束 | 在包装器上添加`overflow: hidden` |
+| 内容变形 | 宽高不匹配 | 确保基准尺寸为1080×1920 |
 
-**Testing Checklist:**
-- [ ] Background fills entire screen
-- [ ] Content is properly rotated
-- [ ] No horizontal scrollbars
-- [ ] **Top/bottom 10% safe area is free of critical content**
-- [ ] **Fixed pixels used (not vh/vw) for all sizes**
-- [ ] Text is readable at scale
-- [ ] Animations play correctly
-- [ ] Card centers in viewport with margin on all sides
+**测试清单：**
+- [ ] 背景填充整个屏幕
+- [ ] 内容正确旋转
+- [ ] 无水平滚动条
+- [ ] **顶部/底部10%安全区域无关键内容**
+- [ ] **所有尺寸使用固定像素（而非vh/vw）**
+- [ ] 文字在缩放下可读
+- [ ] 动画正确播放
+- [ ] 卡片在视口居中，四周有边距
 
-### Responsive Design Tips
+### 响应式设计技巧
 
-**Use CSS Variables for Consistency:**
+**使用CSS变量保持一致性：**
 ```css
 :root {
   --safe-margin: 5vh 5vw;
@@ -766,58 +766,58 @@ body {
 }
 ```
 
-**Media Queries (Optional):**
+**媒体查询（可选）：**
 ```css
 @media (max-aspect-ratio: 16/9) {
-  /* Adjust for narrower screens */
+  /* 适配较窄屏幕 */
   :root {
     --title-size: 6vw;
   }
 }
 ```
 
-## Common Mistakes
+## 常见错误
 
-| Mistake | Fix |
+| 错误 | 修正 |
 |---------|-----|
-| Missing `window.animationFinished` | Always set this signal at animation end |
-| Non-transparent background | Use `background: transparent` or gradient overlays |
-| Fixed dimensions only | Use CSS variables for orientation flexibility |
-| **Using vh/vw in portrait cards** | **Use fixed pixels (px) - vh/vw break after rotation** |
-| **max-width/max-height: 100vh/100vw** | **Use 90vh/90vw to reserve safe area for platform UI** |
-| Blocking operations (alert, prompt) | Never use blocking calls in animation code |
-| External local resources | Use CDNs or inline everything |
+| 缺少`window.animationFinished` | 始终在动画结束时设置此信号 |
+| 非透明背景 | 使用`background: transparent`或渐变叠加 |
+| 仅使用固定尺寸 | 使用CSS变量实现方向灵活性 |
+| **在竖屏卡片中使用vh/vw** | **使用固定像素（px）- vh/vw旋转后失效** |
+| **max-width/max-height: 100vh/100vw** | **使用90vh/90vw为平台UI预留安全区域** |
+| 阻塞操作（alert、prompt） | 动画代码中绝不使用阻塞调用 |
+| 外部本地资源 | 使用CDN或全部内联 |
 
-## CDN Libraries (Optional)
+## CDN库（可选）
 
-Enhance animations with these libraries:
+使用这些库增强动画：
 
 ```html
-<!-- GSAP for complex timelines -->
+<!-- GSAP用于复杂时间轴 -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 
-<!-- Three.js for 3D effects -->
+<!-- Three.js用于3D效果 -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
-<!-- Anime.js for simplified animations -->
+<!-- Anime.js用于简化动画 -->
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
 ```
 
-**Use sparingly** - vanilla CSS/JS is preferred for simple animations.
+**谨慎使用** - 简单动画首选原生CSS/JS。
 
-## Quick Reference
+## 快速参考
 
 ```
-Story → Parse → Style → Generate → Output
+故事 → 解析 → 风格 → 生成 → 输出
   ↓       ↓       ↓         ↓         ↓
-Input  Extract  Select  Create    Files
+输入  提取  选择  创建    文件
 ```
 
-**Style selection heuristic:**
-- Tech/AI/SaaS → `tech`
-- Luxury/Art → `minimal` or `premium`
-- Kids/Family → `cute`
-- Business/Corp → `business`
-- Gaming/Esports → `dark`
-- Food/Lifestyle → `vibrant`
-- Nostalgic → `retro`
+**风格选择启发式：**
+- 科技/AI/SaaS → `tech`
+- 奢侈/艺术 → `minimal` 或 `premium`
+- 儿童/家庭 → `cute`
+- 商务/企业 → `business`
+- 游戏/电竞 → `dark`
+- 美食/生活方式 → `vibrant`
+- 怀旧 → `retro`

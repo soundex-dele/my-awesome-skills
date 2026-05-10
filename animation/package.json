@@ -1,0 +1,20 @@
+{
+  "name": "animation",
+  "version": "1.0.0",
+  "description": "Capture transparent animation frames using Puppeteer",
+  "main": "capture.js",
+  "scripts": {
+    "capture": "node capture.js"
+  },
+  "keywords": [
+    "animation",
+    "puppeteer",
+    "capture",
+    "transparent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^22.0.0"
+  }
+}

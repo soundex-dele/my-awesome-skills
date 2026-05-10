@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 800px;
+            height: 600px;
+            overflow: hidden;
+            /* 透明背景 */
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 地面 */
+        .ground {
+            position: absolute;
+            bottom: 80px;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #4a9eff, transparent);
+            opacity: 0.5;
+        }
+
+        /* 机器人容器 */
+        .robot {
+            position: relative;
+            animation: walk 4s ease-in-out infinite;
+        }
+
+        @keyframes walk {
+            0%, 100% { transform: translateX(-200px); }
+            50% { transform: translateX(200px); }
+        }
+
+        /* 机器人头部 */
+        .head {
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(145deg, #7f8c8d, #5d6d7e);
+            border-radius: 10px 10px 5px 5px;
+            position: relative;
+            margin: 0 auto;
+            animation: headBob 0.5s ease-in-out infinite;
+            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.3);
+        }
+
+        @keyframes headBob {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-3px) rotate(2deg); }
+        }
+
+        /* 眼睛 */
+        .eye {
+            width: 18px;
+            height: 18px;
+            background: #2c3e50;
+            border-radius: 50%;
+            position: absolute;
+            top: 15px;
+            animation: blink 3s ease-in-out infinite;
+        }
+
+        .eye::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: #3498db;
+            border-radius: 50%;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            animation: eyeGlow 1s ease-in-out infinite alternate;
+        }
+
+        .eye.left { left: 12px; }
+        .eye.right { right: 12px; }
+
+        @keyframes blink {
+            0%, 45%, 55%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+
+        @keyframes eyeGlow {
+            0% { background: #3498db; box-shadow: 0 0 5px #3498db; }
+            100% { background: #00d4ff; box-shadow: 0 0 15px #00d4ff; }
+        }
+
+        /* 天线 */
+        .antenna {
+            width: 4px;
+            height: 25px;
+            background: linear-gradient(to top, #5d6d7e, #3498db);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .antenna::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+            top: -8px;
+            left: -4px;
+            animation: antennaPulse 0.8s ease-in-out infinite;
+            box-shadow: 0 0 10px #e74c3c;
+        }
+
+        @keyframes antennaPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        /* 身体 */
+        .body {
+            width: 100px;
+            height: 80px;
+            background: linear-gradient(145deg, #5d6d7e, #34495e);
+            border-radius: 10px;
+            margin: 5px auto 0;
+            position: relative;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* 胸部面板 */
+        .panel {
+            width: 50px;
+            height: 40px;
+            background: #2c3e50;
+            border-radius: 5px;
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .light {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: panelLights 1.5s ease-in-out infinite;
+        }
+
+        .light:nth-child(1) {
+            background: #2ecc71;
+            animation-delay: 0s;
+            box-shadow: 0 0 8px #2ecc71;
+        }
+        .light:nth-child(2) {
+            background: #f1c40f;
+            animation-delay: 0.3s;
+            box-shadow: 0 0 8px #f1c40f;
+        }
+        .light:nth-child(3) {
+            background: #e74c3c;
+            animation-delay: 0.6s;
+            box-shadow: 0 0 8px #e74c3c;
+        }
+
+        @keyframes panelLights {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* 手臂 */
+        .arm {
+            width: 20px;
+            height: 70px;
+            background: linear-gradient(145deg, #7f8c8d, #5d6d7e);
+            border-radius: 10px;
+            position: absolute;
+            top: 70px;
+        }
+
+        .arm.left {
+            left: -25px;
+            animation: armSwingLeft 0.5s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        .arm.right {
+            right: -25px;
+            animation: armSwingRight 0.5s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        @keyframes armSwingLeft {
+            0%, 100% { transform: rotate(-20deg); }
+            50% { transform: rotate(20deg); }
+        }
+
+        @keyframes armSwingRight {
+            0%, 100% { transform: rotate(20deg); }
+            50% { transform: rotate(-20deg); }
+        }
+
+        /* 手 */
+        .hand {
+            width: 24px;
+            height: 24px;
+            background: #5d6d7e;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -10px;
+            left: -2px;
+        }
+
+        /* 腿 */
+        .legs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .leg {
+            width: 25px;
+            height: 50px;
+            background: linear-gradient(145deg, #7f8c8d, #5d6d7e);
+            border-radius: 5px 5px 10px 10px;
+            position: relative;
+            transform-origin: top center;
+        }
+
+        .leg.left {
+            animation: legSwingLeft 0.5s ease-in-out infinite;
+        }
+
+        .leg.right {
+            animation: legSwingRight 0.5s ease-in-out infinite;
+        }
+
+        @keyframes legSwingLeft {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+        }
+
+        @keyframes legSwingRight {
+            0%, 100% { transform: rotate(15deg); }
+            50% { transform: rotate(-15deg); }
+        }
+
+        /* 脚 */
+        .foot {
+            width: 35px;
+            height: 12px;
+            background: #34495e;
+            border-radius: 5px;
+            position: absolute;
+            bottom: -5px;
+            left: -5px;
+        }
+
+        /* 粒子效果 */
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #3498db;
+            border-radius: 50%;
+            animation: particleFloat 2s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-50px) scale(0.5); opacity: 0.3; }
+        }
+
+        /* 阴影 */
+        .shadow {
+            position: absolute;
+            bottom: 70px;
+            width: 120px;
+            height: 20px;
+            background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%);
+            animation: shadowScale 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shadowScale {
+            0%, 100% { transform: scaleX(1); }
+            50% { transform: scaleX(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ground"></div>
+
+        <div class="robot">
+            <div class="shadow"></div>
+
+            <div class="head">
+                <div class="antenna"></div>
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+            </div>
+
+            <div class="body">
+                <div class="arm left"><div class="hand"></div></div>
+                <div class="arm right"><div class="hand"></div></div>
+                <div class="panel">
+                    <div class="light"></div>
+                    <div class="light"></div>
+                    <div class="light"></div>
+                </div>
+            </div>
+
+            <div class="legs">
+                <div class="leg left"><div class="foot"></div></div>
+                <div class="leg right"><div class="foot"></div></div>
+            </div>
+        </div>
+
+        <!-- 粒子 -->
+        <div class="particle" style="left: 15%; top: 20%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 25%; top: 60%; animation-delay: 0.5s;"></div>
+        <div class="particle" style="left: 70%; top: 30%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 85%; top: 50%; animation-delay: 1.5s;"></div>
+        <div class="particle" style="left: 50%; top: 80%; animation-delay: 0.8s;"></div>
+    </div>
+
+    <script>
+        // 暴露给 Puppeteer 控制的接口
+        window.seekTo = function(time) {
+            // 重置所有动画
+            document.body.style.display = 'none';
+            document.body.offsetHeight; // 触发重排
+            document.body.style.display = 'block';
+
+            // 设置动画的负延迟来模拟时间跳跃
+            const style = document.createElement('style');
+            style.textContent = `
+                * {
+                    animation-delay: -${time}s !important;
+                }
+            `;
+            document.head.appendChild(style);
+
+            return time;
+        };
+
+        window.getTotalDuration = function() {
+            return 5; // 总时长 5 秒
+        };
+
+        console.log('Robot Animation loaded. Total duration: 5s');
+    </script>
+</body>
+</html>

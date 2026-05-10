@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand-drawn Cat Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 800px;
+            height: 600px;
+            overflow: hidden;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: floatHeart 3s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            font-size: 16px;
+            animation: twinkle 4s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="hearts" id="hearts"></div>
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script type="module">
+        import rough from 'https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.esm.js';
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const rc = rough.canvas(canvas);
+
+        // 动画状态
+        let time = 0;
+        let blinkTimer = 0;
+        let isBlinking = false;
+        let blinkDuration = 0;
+        let animationId = null;
+        let isPuppeteerMode = false;
+        let heartsCreated = [];
+        let heartIntervals = [];
+
+        // 总时长
+        const TOTAL_DURATION = 10; // 10秒
+
+        // 手绘风格配置
+        const options = {
+            stroke: '#2d2d2d',
+            strokeWidth: 2,
+            roughness: 1.5,
+            bowing: 2,
+            fill: 'none',
+            seed: 12345  // 固定种子避免闪烁
+        };
+
+        const fillOptions = {
+            ...options,
+            fill: '#f5a623',
+            fillStyle: 'zigzag',
+            hachureAngle: 60,
+            hachureGap: 8,
+            seed: 12346
+        };
+
+        const whiteFillOptions = {
+            ...options,
+            fill: '#ffffff',
+            fillStyle: 'zigzag',
+            hachureAngle: 45,
+            hachureGap: 6,
+            seed: 12347
+        };
+
+        const pinkFillOptions = {
+            ...options,
+            fill: '#ffb6c1',
+            fillStyle: 'zigzag',
+            hachureAngle: 30,
+            hachureGap: 5,
+            seed: 12348
+        };
+
+        // 创建星星背景
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            starsContainer.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.textContent = '✨';
+                star.style.left = 50 + (i * 90) + 'px';
+                star.style.top = 50 + (i % 3) * 180 + 'px';
+                star.dataset.baseDelay = i * 0.25;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // 更新星星动画延迟
+        function updateStarsDelay(currentTime) {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach(star => {
+                const baseDelay = parseFloat(star.dataset.baseDelay) || 0;
+                star.style.animationDelay = `-${currentTime + baseDelay}s`;
+            });
+        }
+
+        // 创建浮动爱心
+        function createHeart(delay = 0) {
+            const heartsContainer = document.getElementById('hearts');
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = '💕';
+            heart.style.left = 200 + Math.random() * 400 + 'px';
+            heart.style.top = 400 + Math.random() * 100 + 'px';
+            heart.style.animationDelay = `-${delay}s`;
+            heartsContainer.appendChild(heart);
+            return heart;
+        }
+
+        // 预生成爱心 (基于时间)
+        function generateHeartsForTime(currentTime) {
+            const heartsContainer = document.getElementById('hearts');
+            heartsContainer.innerHTML = '';
+
+            // 每1.5秒生成一个爱心，预计算当前时间应该显示的爱心
+            for (let t = 0; t < TOTAL_DURATION; t += 1.5) {
+                const heartAge = currentTime - t;
+                if (heartAge >= 0 && heartAge < 3) {
+                    // 爱心生命周期3秒
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.textContent = '💕';
+                    // 使用固定的随机种子基于时间
+                    const seed = Math.sin(t * 123.456) * 10000;
+                    heart.style.left = 200 + (Math.abs(Math.floor(seed) % 400)) + 'px';
+                    heart.style.top = 400 + (Math.abs(Math.floor(seed * 0.5) % 100)) + 'px';
+                    heart.style.animationDelay = `-${heartAge}s`;
+                    heartsContainer.appendChild(heart);
+                }
+            }
+        }
+
+        // 根据时间计算眨眼状态
+        function calculateBlinkState(t) {
+            // 使用固定的时间点来决定眨眼
+            const blinkCycle1 = t % 3;
+            const blinkCycle2 = (t + 1.5) % 4;
+
+            // 在每个周期的2秒处开始眨眼
+            if (blinkCycle1 > 2 && blinkCycle1 < 2.15) {
+                return { isBlinking: true, blinkDuration: blinkCycle1 - 2 };
+            }
+            if (blinkCycle2 > 2.5 && blinkCycle2 < 2.65) {
+                return { isBlinking: true, blinkDuration: blinkCycle2 - 2.5 };
+            }
+            return { isBlinking: false, blinkDuration: 0 };
+        }
+
+        // 绘制猫
+        function drawCat(t) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 呼吸动画
+            const breathe = Math.sin(t * 0.8) * 3;
+
+            // 尾巴摆动
+            const tailWag = Math.sin(t * 1.5) * 30;
+
+            // 胡须抖动
+            const whiskerTwitch = Math.sin(t * 1) * 3;
+
+            // 耳朵轻微抖动
+            const earTwitch = Math.sin(t * 0.8) * 2;
+
+            // 眨眼逻辑 (基于时间计算)
+            const blinkState = calculateBlinkState(t);
+            isBlinking = blinkState.isBlinking;
+            blinkDuration = blinkState.blinkDuration;
+
+            // 猫身体中心
+            const cx = 400;
+            const cy = 320;
+
+            // 绘制尾巴 (带摆动动画)
+            const tailPath = `M 520 380 Q ${620 + tailWag} ${300 + tailWag/2} ${580 + tailWag * 0.5} 200 Q ${560 + tailWag/2} ${150 - tailWag/3} ${620 + tailWag * 0.3} 120`;
+            rc.path(tailPath, {
+                ...options,
+                strokeWidth: 3
+            });
+
+            // 绘制身体 (椭圆 + 呼吸)
+            rc.ellipse(cx, cy + 40, 220 + breathe, 180 + breathe * 0.5, fillOptions);
+
+            // 绘制后腿
+            rc.ellipse(cx + 60, cy + 120, 50, 70, fillOptions);
+            rc.ellipse(cx - 60, cy + 120, 50, 70, fillOptions);
+
+            // 绘制前腿
+            rc.ellipse(cx + 70, cy + 80, 35, 60, fillOptions);
+            rc.ellipse(cx - 70, cy + 80, 35, 60, fillOptions);
+
+            // 绘制爪子
+            rc.ellipse(cx + 70, cy + 115, 30, 20, whiteFillOptions);
+            rc.ellipse(cx - 70, cy + 115, 30, 20, whiteFillOptions);
+
+            // 绘制头部 (大圆 + 呼吸)
+            rc.circle(cx, cy - 80, 160 + breathe * 0.3, fillOptions);
+
+            // 绘制耳朵 (带抖动)
+            rc.path(`M ${cx - 60} ${cy - 140} L ${cx - 80 + earTwitch} ${cy - 200} L ${cx - 20} ${cy - 150} Z`, fillOptions);
+            rc.path(`M ${cx + 60} ${cy - 140} L ${cx + 80 - earTwitch} ${cy - 200} L ${cx + 20} ${cy - 150} Z`, fillOptions);
+
+            // 绘制内耳 (粉色)
+            rc.path(`M ${cx - 55} ${cy - 145} L ${cx - 70 + earTwitch} ${cy - 185} L ${cx - 30} ${cy - 150} Z`, pinkFillOptions);
+            rc.path(`M ${cx + 55} ${cy - 145} L ${cx + 70 - earTwitch} ${cy - 185} L ${cx + 30} ${cy - 150} Z`, pinkFillOptions);
+
+            // 绘制脸部白色区域
+            rc.ellipse(cx, cy - 60, 120, 100, whiteFillOptions);
+
+            // 绘制眼睛
+            const eyeY = cy - 90;
+            const eyeSpacing = 40;
+
+            // 眼睛高度 (眨眼时变窄)
+            const eyeHeight = isBlinking ? 35 * (0.5 - Math.abs(blinkDuration - 0.075) / 0.15) : 35;
+
+            // 左眼
+            if (eyeHeight > 2) {
+                rc.ellipse(cx - eyeSpacing, eyeY, 30, eyeHeight, {
+                    ...options,
+                    fill: '#2d2d2d',
+                    fillStyle: 'solid'
+                });
+                // 左眼高光
+                if (!isBlinking) {
+                    rc.ellipse(cx - eyeSpacing + 5, eyeY - 5, 10, 12, {
+                        fill: '#ffffff',
+                        fillStyle: 'solid',
+                        stroke: 'none'
+                    });
+                }
+            }
+
+            // 右眼
+            if (eyeHeight > 2) {
+                rc.ellipse(cx + eyeSpacing, eyeY, 30, eyeHeight, {
+                    ...options,
+                    fill: '#2d2d2d',
+                    fillStyle: 'solid'
+                });
+                // 右眼高光
+                if (!isBlinking) {
+                    rc.ellipse(cx + eyeSpacing + 5, eyeY - 5, 10, 12, {
+                        fill: '#ffffff',
+                        fillStyle: 'solid',
+                        stroke: 'none'
+                    });
+                }
+            }
+
+            // 眨眼时的眯眼线条
+            if (isBlinking) {
+                rc.path(`M ${cx - eyeSpacing - 15} ${eyeY} Q ${cx - eyeSpacing} ${eyeY + 5} ${cx - eyeSpacing + 15} ${eyeY}`, {
+                    ...options,
+                    strokeWidth: 2
+                });
+                rc.path(`M ${cx + eyeSpacing - 15} ${eyeY} Q ${cx + eyeSpacing} ${eyeY + 5} ${cx + eyeSpacing + 15} ${eyeY}`, {
+                    ...options,
+                    strokeWidth: 2
+                });
+            }
+
+            // 绘制鼻子 (粉色三角形)
+            rc.path(`M ${cx} ${cy - 55} L ${cx - 12} ${cy - 40} L ${cx + 12} ${cy - 40} Z`, {
+                ...options,
+                fill: '#ffb6c1',
+                fillStyle: 'solid'
+            });
+
+            // 绘制嘴巴
+            rc.path(`M ${cx} ${cy - 40} L ${cx} ${cy - 25}`, options);
+            rc.path(`M ${cx} ${cy - 25} Q ${cx - 20} ${cy - 10} ${cx - 25} ${cy - 30}`, options);
+            rc.path(`M ${cx} ${cy - 25} Q ${cx + 20} ${cy - 10} ${cx + 25} ${cy - 30}`, options);
+
+            // 绘制胡须 (带抖动)
+            const whiskerY = cy - 35;
+            // 左边胡须
+            rc.line(cx - 50, whiskerY - 10, cx - 100 + whiskerTwitch, whiskerY - 20 - whiskerTwitch, options);
+            rc.line(cx - 50, whiskerY, cx - 100 + whiskerTwitch * 0.5, whiskerY - whiskerTwitch, options);
+            rc.line(cx - 50, whiskerY + 10, cx - 100, whiskerY + 20 + whiskerTwitch, options);
+            // 右边胡须
+            rc.line(cx + 50, whiskerY - 10, cx + 100 - whiskerTwitch, whiskerY - 20 + whiskerTwitch, options);
+            rc.line(cx + 50, whiskerY, cx + 100 - whiskerTwitch * 0.5, whiskerY + whiskerTwitch, options);
+            rc.line(cx + 50, whiskerY + 10, cx + 100, whiskerY + 20 - whiskerTwitch, options);
+
+            // 绘制腮红 (脉动效果)
+            const blushPulse = Math.sin(t * 1.5) * 2;
+            rc.ellipse(cx - 55, cy - 50, 20 + blushPulse, 12 + blushPulse * 0.5, {
+                ...pinkFillOptions,
+                strokeWidth: 0
+            });
+            rc.ellipse(cx + 55, cy - 50, 20 + blushPulse, 12 + blushPulse * 0.5, {
+                ...pinkFillOptions,
+                strokeWidth: 0
+            });
+        }
+
+        // 动画循环
+        function animate() {
+            time += 0.016;
+            drawCat(time);
+            updateStarsDelay(time);
+            generateHeartsForTime(time);
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Puppeteer 接口
+        window.seekTo = function(targetTime) {
+            isPuppeteerMode = true;
+
+            // 停止自动动画
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+
+            // 设置时间并绘制帧
+            time = targetTime;
+            drawCat(time);
+            updateStarsDelay(time);
+            generateHeartsForTime(time);
+
+            return time;
+        };
+
+        window.getTotalDuration = function() {
+            return TOTAL_DURATION;
+        };
+
+        // 初始化
+        createStars();
+        animate();
+
+        console.log('Animated hand-drawn cat created with Rough.js!');
+        console.log('Puppeteer interface ready: seekTo(time), getTotalDuration()');
+        console.log('Total duration:', TOTAL_DURATION, 'seconds');
+    </script>
+</body>
+</html>

@@ -92,6 +92,55 @@ Skills 需要安装到 Claude Code 的插件路径中才能使用。通常路径
 ln -s /path/to/my-awesome-skills/skills/anthropic-official/document-skills ~/.claude/plugins/
 ```
 
+## 动画素材生成器
+
+项目中的 `animation/` 目录包含使用 Puppeteer 录制 HTML 动画的工具。
+
+### 使用方法
+
+```bash
+cd animation
+npm install
+node capture.js
+```
+
+### 注意事项
+
+**JavaScript 动画需要特殊处理**
+
+Puppeteer 通过 `window.seekTo(time)` 函数跳转到指定时间点进行逐帧录制。这个函数默认只能控制 **CSS 动画**（通过设置 `animation-delay`）。
+
+如果你的动画使用 JavaScript 实现（如 `setTimeout`、`requestAnimationFrame`），需要在 `seekTo` 函数中手动处理：
+
+```javascript
+window.seekTo = function(time) {
+    // 控制 CSS 动画
+    styleEl.textContent = `* { animation-delay: -${time}s !important; }`;
+
+    // 手动控制 JavaScript 动画状态
+    // 根据时间计算并设置动画元素的当前状态
+    const progress = (time - startTime) / duration;
+    element.textContent = text.substring(0, Math.floor(progress * text.length));
+};
+```
+
+**透明背景录制**
+
+使用 `omitBackground: true` 保留透明通道：
+
+```javascript
+await page.screenshot({
+    path: framePath,
+    omitBackground: true  // 保留透明背景
+});
+```
+
+**生成透明视频**
+
+```bash
+ffmpeg -framerate 30 -i frames/frame_%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p output.webm
+```
+
 ## 资源链接
 
 - [Agent Skills 官方标准](https://agentskills.io)

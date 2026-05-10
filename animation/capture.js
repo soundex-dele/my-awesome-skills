@@ -10,7 +10,7 @@ async function captureTransparentAnimation() {
     });
 
     const page = await browser.newPage();
-    const htmlPath = path.join(__dirname, 'index.html');
+    const htmlPath = path.join(__dirname, 'cool-title-animation.html');
     const fileUrl = `file://${htmlPath}`;
 
     // 设置视口
@@ -26,11 +26,12 @@ async function captureTransparentAnimation() {
         waitUntil: 'networkidle0',
     });
 
-    // 创建输出目录
+    // 创建输出目录（先删除后创建）
     const outputDir = path.join(__dirname, 'frames');
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
+    if (fs.existsSync(outputDir)) {
+        fs.rmSync(outputDir, { recursive: true, force: true });
     }
+    fs.mkdirSync(outputDir, { recursive: true });
 
     // 获取总时长
     const totalDuration = await page.evaluate(() => window.getTotalDuration());

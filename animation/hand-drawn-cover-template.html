@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科技手绘风格封面模板 (9:16)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 607px;
+            height: 1080px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #0f1f2f 100%);
+        }
+
+        .cover-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #coverCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 607px;
+            height: 1080px;
+        }
+
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .title {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            font-size: 44px;
+            font-weight: bold;
+            color: #00f0ff;
+            letter-spacing: 8px;
+            text-shadow:
+                0 0 10px rgba(0, 240, 255, 0.8),
+                0 0 20px rgba(0, 240, 255, 0.5),
+                0 0 40px rgba(0, 240, 255, 0.3);
+            position: absolute;
+            top: 160px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-size: 18px;
+            color: #88ffff;
+            letter-spacing: 6px;
+            opacity: 0.9;
+            position: absolute;
+            top: 320px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(136, 255, 255, 0.5);
+        }
+
+        .tech-label {
+            font-family: 'Consolas', monospace;
+            font-size: 11px;
+            color: #00f0ff;
+            opacity: 0.6;
+            position: absolute;
+            letter-spacing: 2px;
+        }
+        .titleSub {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            font-size: 40px;
+            font-weight: bold;
+            color: #00f0ff;
+            letter-spacing: 6px;
+            text-shadow:
+                0 0 10px rgba(0, 240, 255, 0.8),
+                0 0 20px rgba(0, 240, 255, 0.5),
+                0 0 40px rgba(0, 240, 255, 0.3);
+            position: absolute;
+            top: 160px;
+            text-align: center;
+        }
+        .titleMain {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            font-size: 64px;
+            font-weight: bold;
+            color: #00f0ff;
+            letter-spacing: 8px;
+            text-shadow:
+                0 0 10px rgba(0, 240, 255, 0.8),
+                0 0 20px rgba(0, 240, 255, 0.5),
+                0 0 40px rgba(0, 240, 255, 0.3);
+            position: absolute;
+            top: 220px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="cover-container">
+        <canvas id="coverCanvas" width="1214" height="2160"></canvas>
+        <div class="text-layer">
+            <div class="titleSub" id="titleText">神嘴马良</div>
+            <div class="titleMain" id="titleText">素材生成器</div>
+            <div class="subtitle" id="subtitleText">AI赋能创作</div>
+            <div class="tech-label" style="top: 40px; left: 30px;">SYSTEM_v2.0</div>
+            <div class="tech-label" style="bottom: 40px; right: 30px;">STATUS: ACTIVE</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.esm.js" type="module"></script>
+    <script type="module">
+        import rough from 'https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.esm.js';
+
+        const WIDTH = 607;
+        const HEIGHT = 1080;
+
+        const CONFIG = {
+            content: {
+                title: "智能体AI工坊",
+                subtitle: "AI赋能创作",
+                theme: "cyber"  // cyber | matrix | neon
+            },
+            style: {
+                type: "chalk",
+                pattern: "circuit"  // circuit | grid | nodes | binary
+            },
+            colors: {
+                primary: "#00f0ff",
+                accent: "#ff00aa",
+                secondary: "#00ff88",
+                dim: "#1a3a4a"
+            },
+            layout: {
+                titleY: 180,
+                logoY: 540,
+                logoRadius: 120,
+                subtitleY: 880
+            }
+        };
+
+        // 科技风颜色主题
+        const THEMES = {
+            cyber: {
+                primary: "#00f0ff",
+                accent: "#ff00aa",
+                secondary: "#00ff88",
+                dim: "#1a3a4a",
+                glow: "rgba(0, 240, 255, 0.3)"
+            },
+            matrix: {
+                primary: "#00ff00",
+                accent: "#88ff88",
+                secondary: "#00aa00",
+                dim: "#0a2a0a",
+                glow: "rgba(0, 255, 0, 0.3)"
+            },
+            neon: {
+                primary: "#ff00ff",
+                accent: "#00ffff",
+                secondary: "#ffff00",
+                dim: "#2a1a3a",
+                glow: "rgba(255, 0, 255, 0.3)"
+            }
+        };
+
+        function getColors() {
+            return THEMES[CONFIG.content.theme] || THEMES.cyber;
+        }
+
+        function getTechStyle(colors) {
+            return {
+                roughness: 1.5,
+                bowing: 2,
+                strokeWidth: 2,
+                stroke: colors.primary,
+                fill: colors.glow
+            };
+        }
+
+        function drawCover() {
+            const canvas = document.getElementById('coverCanvas');
+            const rc = rough.canvas(canvas);
+            const ctx = canvas.getContext('2d');
+            const colors = getColors();
+            const style = getTechStyle(colors);
+
+            // 更新文字颜色
+            document.getElementById('titleText').style.color = colors.primary;
+            document.getElementById('titleText').style.textShadow =
+                `0 0 10px ${colors.glow}, 0 0 20px ${colors.glow}, 0 0 40px ${colors.glow}`;
+            document.getElementById('subtitleText').style.color = colors.accent;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const cx = WIDTH;
+            const cy = CONFIG.layout.logoY * 2;
+
+            // 1. 背景网格
+            drawGrid(rc, colors);
+
+            // 2. 电路线
+            drawCircuitBoard(rc, colors, style);
+
+            // 3. 中央机器人
+            drawRobot(rc, cx, cy, CONFIG.layout.logoRadius * 2, colors, style);
+
+            // 4. 连接节点
+            drawConnectionNodes(rc, cx, cy, colors, style);
+
+            // 5. 数据流线条
+            drawDataFlow(rc, colors, style);
+
+            // 6. 角落装饰
+            drawCornerTech(rc, colors, style);
+
+            // 7. 二进制装饰
+            drawBinaryText(ctx, colors);
+
+            // 8. 扫描线效果
+            drawScanLines(ctx, colors);
+        }
+
+        // 绘制背景网格
+        function drawGrid(rc, colors) {
+            const gridStyle = {
+                roughness: 0.5,
+                bowing: 1,
+                strokeWidth: 0.5,
+                stroke: colors.dim
+            };
+
+            // 横线
+            for (let y = 0; y <= HEIGHT * 2; y += 60) {
+                rc.line(0, y, WIDTH * 2, y, gridStyle);
+            }
+            // 竖线
+            for (let x = 0; x <= WIDTH * 2; x += 60) {
+                rc.line(x, 0, x, HEIGHT * 2, gridStyle);
+            }
+        }
+
+        // 绘制电路板图案
+        function drawCircuitBoard(rc, colors, style) {
+            const circuits = [
+                // 左侧电路线
+                { start: [0, 300], path: [[200, 300], [200, 450], [350, 450]] },
+                { start: [0, 600], path: [[150, 600], [150, 750], [300, 750], [300, 900]] },
+                { start: [0, 1500], path: [[250, 1500], [250, 1700], [400, 1700]] },
+
+                // 右侧电路线
+                { start: [WIDTH * 2, 400], path: [[WIDTH * 2 - 180, 400], [WIDTH * 2 - 180, 550], [WIDTH * 2 - 320, 550]] },
+                { start: [WIDTH * 2, 800], path: [[WIDTH * 2 - 120, 800], [WIDTH * 2 - 120, 650], [WIDTH * 2 - 280, 650]] },
+                { start: [WIDTH * 2, 1400], path: [[WIDTH * 2 - 200, 1400], [WIDTH * 2 - 200, 1600], [WIDTH * 2 - 350, 1600]] },
+
+                // 顶部电路线
+                { start: [400, 0], path: [[400, 150], [550, 150], [550, 300]] },
+                { start: [800, 0], path: [[800, 100], [700, 100], [700, 200], [600, 200]] },
+
+                // 底部电路线
+                { start: [300, HEIGHT * 2], path: [[300, HEIGHT * 2 - 150], [450, HEIGHT * 2 - 150], [450, HEIGHT * 2 - 300]] },
+                { start: [900, HEIGHT * 2], path: [[900, HEIGHT * 2 - 100], [800, HEIGHT * 2 - 100], [800, HEIGHT * 2 - 250]] }
+            ];
+
+            circuits.forEach(circuit => {
+                let [x, y] = circuit.start;
+                circuit.path.forEach(point => {
+                    rc.line(x, y, point[0], point[1], {
+                        ...style,
+                        stroke: colors.secondary,
+                        strokeWidth: 1.5
+                    });
+                    x = point[0];
+                    y = point[1];
+                });
+                // 端点节点
+                rc.circle(x, y, 8, {
+                    ...style,
+                    stroke: colors.secondary,
+                    fill: colors.secondary
+                });
+            });
+        }
+
+        // 绘制手绘机器人
+        function drawRobot(rc, cx, cy, radius, colors, style) {
+            const scale = radius / 120;
+
+            // 头部 - 圆角矩形
+            const headW = 100 * scale;
+            const headH = 80 * scale;
+            const headY = cy - 60 * scale;
+            rc.rectangle(cx - headW/2, headY - headH/2, headW, headH, {
+                ...style,
+                stroke: colors.primary,
+                fill: colors.glow,
+                strokeWidth: 2.5
+            });
+
+            // 天线
+            rc.line(cx, headY - headH/2, cx, headY - headH/2 - 30 * scale, {
+                ...style,
+                stroke: colors.accent,
+                strokeWidth: 2
+            });
+            rc.circle(cx, headY - headH/2 - 35 * scale, 8 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent
+            });
+
+            // 眼睛
+            const eyeY = headY - 5 * scale;
+            const eyeSpacing = 25 * scale;
+            // 左眼
+            rc.circle(cx - eyeSpacing, eyeY, 15 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent + "60"
+            });
+            rc.circle(cx - eyeSpacing, eyeY, 6 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent
+            });
+            // 右眼
+            rc.circle(cx + eyeSpacing, eyeY, 15 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent + "60"
+            });
+            rc.circle(cx + eyeSpacing, eyeY, 6 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent
+            });
+
+            // 嘴巴 - LED条形
+            const mouthW = 40 * scale;
+            const mouthH = 8 * scale;
+            rc.rectangle(cx - mouthW/2, headY + 20 * scale, mouthW, mouthH, {
+                ...style,
+                stroke: colors.secondary,
+                fill: colors.secondary + "40"
+            });
+            // 嘴巴分割线
+            for (let i = 1; i < 4; i++) {
+                const x = cx - mouthW/2 + (mouthW/4) * i;
+                rc.line(x, headY + 20 * scale, x, headY + 20 * scale + mouthH, {
+                    ...style,
+                    stroke: colors.secondary,
+                    strokeWidth: 1
+                });
+            }
+
+            // 脖子
+            rc.rectangle(cx - 15 * scale, headY + headH/2, 30 * scale, 20 * scale, {
+                ...style,
+                stroke: colors.primary,
+                fill: colors.dim
+            });
+
+            // 身体
+            const bodyY = cy + 50 * scale;
+            const bodyW = 90 * scale;
+            const bodyH = 100 * scale;
+            rc.rectangle(cx - bodyW/2, bodyY, bodyW, bodyH, {
+                ...style,
+                stroke: colors.primary,
+                fill: colors.glow,
+                strokeWidth: 2.5
+            });
+
+            // 胸部面板
+            rc.rectangle(cx - 35 * scale, bodyY + 15 * scale, 70 * scale, 50 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent + "20"
+            });
+
+            // 面板上的指示灯
+            const lightY = bodyY + 30 * scale;
+            rc.circle(cx - 18 * scale, lightY, 6 * scale, {
+                ...style,
+                stroke: colors.primary,
+                fill: colors.primary
+            });
+            rc.circle(cx, lightY, 6 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent
+            });
+            rc.circle(cx + 18 * scale, lightY, 6 * scale, {
+                ...style,
+                stroke: colors.secondary,
+                fill: colors.secondary
+            });
+
+            // 波形显示
+            const waveY = bodyY + 50 * scale;
+            rc.path(`M ${cx - 25*scale},${waveY} Q ${cx - 15*scale},${waveY - 10*scale} ${cx},${waveY} Q ${cx + 15*scale},${waveY + 10*scale} ${cx + 25*scale},${waveY}`, {
+                ...style,
+                stroke: colors.secondary,
+                strokeWidth: 1.5,
+                fill: null
+            });
+
+            // 手臂
+            const armY = bodyY + 20 * scale;
+            const armLen = 60 * scale;
+            // 左臂
+            rc.line(cx - bodyW/2, armY, cx - bodyW/2 - 25 * scale, armY + 30 * scale, {
+                ...style,
+                stroke: colors.primary,
+                strokeWidth: 4
+            });
+            rc.circle(cx - bodyW/2 - 25 * scale, armY + 35 * scale, 12 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent + "40"
+            });
+            // 右臂
+            rc.line(cx + bodyW/2, armY, cx + bodyW/2 + 25 * scale, armY + 30 * scale, {
+                ...style,
+                stroke: colors.primary,
+                strokeWidth: 4
+            });
+            rc.circle(cx + bodyW/2 + 25 * scale, armY + 35 * scale, 12 * scale, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent + "40"
+            });
+
+            // 底部装饰圆环
+            rc.circle(cx, cy + radius * 1.2, radius * 1.5, {
+                ...style,
+                stroke: colors.primary,
+                strokeWidth: 1.5,
+                fill: null,
+                roughness: 2
+            });
+            rc.circle(cx, cy + radius * 1.2, radius * 1.3, {
+                ...style,
+                stroke: colors.accent,
+                strokeWidth: 1,
+                fill: null,
+                roughness: 2
+            });
+        }
+
+        // 绘制六边形
+        function drawHexagon(rc, cx, cy, radius, style) {
+            const points = [];
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * Math.PI / 3) - Math.PI / 2;
+                points.push([
+                    cx + radius * Math.cos(angle),
+                    cy + radius * Math.sin(angle)
+                ]);
+            }
+            rc.polygon(points, style);
+        }
+
+        // 绘制连接节点
+        function drawConnectionNodes(rc, cx, cy, colors, style) {
+            const nodePositions = [
+                // 围绕logo的节点
+                { x: cx - 300, y: cy - 200, size: 15 },
+                { x: cx + 300, y: cy - 150, size: 12 },
+                { x: cx - 280, y: cy + 250, size: 18 },
+                { x: cx + 320, y: cy + 300, size: 14 },
+                { x: cx - 150, y: cy - 350, size: 10 },
+                { x: cx + 180, y: cy + 380, size: 16 },
+                // 散布的小节点
+                { x: 200, y: 400, size: 8 },
+                { x: WIDTH * 2 - 200, y: 500, size: 10 },
+                { x: 150, y: 1500, size: 12 },
+                { x: WIDTH * 2 - 150, y: 1600, size: 9 }
+            ];
+
+            nodePositions.forEach(node => {
+                // 外圈
+                rc.circle(node.x, node.y, node.size * 2, {
+                    ...style,
+                    stroke: colors.accent,
+                    fill: null
+                });
+                // 内点
+                rc.circle(node.x, node.y, node.size, {
+                    ...style,
+                    stroke: colors.accent,
+                    fill: colors.accent + "60"
+                });
+                // 连接到最近的邻居
+                if (node.x < cx) {
+                    rc.line(node.x + node.size, node.y, cx - 350, cy, {
+                        ...style,
+                        stroke: colors.dim,
+                        strokeWidth: 1
+                    });
+                }
+            });
+        }
+
+        // 绘制数据流
+        function drawDataFlow(rc, colors, style) {
+            // 顶部数据流
+            for (let i = 0; i < 5; i++) {
+                const y = 200 + i * 30;
+                const startX = 100 + Math.random() * 200;
+                const endX = WIDTH * 2 - 100 - Math.random() * 200;
+                rc.line(startX, y, endX, y, {
+                    ...style,
+                    stroke: i % 2 === 0 ? colors.primary : colors.secondary,
+                    strokeWidth: 1,
+                    roughness: 2
+                });
+            }
+
+            // 底部数据流
+            for (let i = 0; i < 5; i++) {
+                const y = HEIGHT * 2 - 200 - i * 30;
+                const startX = 100 + Math.random() * 200;
+                const endX = WIDTH * 2 - 100 - Math.random() * 200;
+                rc.line(startX, y, endX, y, {
+                    ...style,
+                    stroke: i % 2 === 0 ? colors.accent : colors.primary,
+                    strokeWidth: 1,
+                    roughness: 2
+                });
+            }
+        }
+
+        // 绘制角落科技装饰
+        function drawCornerTech(rc, colors, style) {
+            // 左上角
+            rc.path('M 40,40 L 40,120 M 40,40 L 120,40', {
+                ...style,
+                stroke: colors.primary,
+                strokeWidth: 3
+            });
+            rc.circle(40, 40, 16, {
+                ...style,
+                stroke: colors.primary,
+                fill: colors.glow
+            });
+
+            // 右上角
+            rc.path(`M ${WIDTH * 2 - 40},40 L ${WIDTH * 2 - 40},120 M ${WIDTH * 2 - 40},40 L ${WIDTH * 2 - 120},40`, {
+                ...style,
+                stroke: colors.accent,
+                strokeWidth: 3
+            });
+            rc.circle(WIDTH * 2 - 40, 40, 16, {
+                ...style,
+                stroke: colors.accent,
+                fill: colors.accent + "40"
+            });
+
+            // 左下角
+            rc.path(`M 40,${HEIGHT * 2 - 40} L 40,${HEIGHT * 2 - 120} M 40,${HEIGHT * 2 - 40} L 120,${HEIGHT * 2 - 40}`, {
+                ...style,
+                stroke: colors.secondary,
+                strokeWidth: 3
+            });
+            rc.circle(40, HEIGHT * 2 - 40, 16, {
+                ...style,
+                stroke: colors.secondary,
+                fill: colors.secondary + "40"
+            });
+
+            // 右下角
+            rc.path(`M ${WIDTH * 2 - 40},${HEIGHT * 2 - 40} L ${WIDTH * 2 - 40},${HEIGHT * 2 - 120} M ${WIDTH * 2 - 40},${HEIGHT * 2 - 40} L ${WIDTH * 2 - 120},${HEIGHT * 2 - 40}`, {
+                ...style,
+                stroke: colors.primary,
+                strokeWidth: 3
+            });
+            rc.circle(WIDTH * 2 - 40, HEIGHT * 2 - 40, 16, {
+                ...style,
+                stroke: colors.primary,
+                fill: colors.glow
+            });
+        }
+
+        // 绘制二进制文字
+        function drawBinaryText(ctx, colors) {
+            ctx.font = '10px Consolas, monospace';
+            ctx.fillStyle = colors.primary + '30';
+
+            const binaryLines = [
+                '01001000 01100101 01101100 01101100 01101111',
+                '10110101 11001010 00110110 10011010',
+                '01100001 01101001 00100000 01000001 01001001',
+                '11001100 10101010 01010101 11110000'
+            ];
+
+            // 左侧二进制
+            ctx.save();
+            ctx.translate(30, 600);
+            ctx.rotate(-Math.PI / 2);
+            binaryLines.forEach((line, i) => {
+                ctx.fillText(line, 0, i * 15);
+            });
+            ctx.restore();
+
+            // 右侧二进制
+            ctx.save();
+            ctx.translate(WIDTH * 2 - 30, 1400);
+            ctx.rotate(Math.PI / 2);
+            binaryLines.forEach((line, i) => {
+                ctx.fillText(line, 0, i * 15);
+            });
+            ctx.restore();
+        }
+
+        // 绘制扫描线
+        function drawScanLines(ctx, colors) {
+            ctx.strokeStyle = colors.primary + '10';
+            ctx.lineWidth = 1;
+
+            for (let y = 0; y < HEIGHT * 2; y += 4) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(WIDTH * 2, y);
+                ctx.stroke();
+            }
+        }
+
+        // 初始化
+        drawCover();
+
+        window.updateCover = function(newConfig) {
+            Object.assign(CONFIG, newConfig);
+            Object.assign(CONFIG.content, newConfig.content || {});
+            Object.assign(CONFIG.style, newConfig.style || {});
+            Object.assign(CONFIG.colors, newConfig.colors || {});
+            drawCover();
+        };
+
+        console.log('科技手绘封面已加载。主题: cyber | matrix | neon');
+    </script>
+</body>
+</html>

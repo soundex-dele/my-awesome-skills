@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蘑菇奔跑动画</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 1920px;
+  height: 1080px;
+  background: transparent;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.mushroom-container {
+  position: absolute;
+  top: 50%;
+  left: -150px;
+  transform: translateY(-50%);
+}
+
+.mushroom {
+  width: 64px;
+  height: 64px;
+  background: url('assets/Mushroom-Run.png') 0 0 no-repeat;
+  image-rendering: pixelated;
+  transform: scale(4);
+  transform-origin: left center;
+}
+</style>
+</head>
+<body>
+
+<div id="root" data-composition-id="mushroom-run" data-start="0" data-width="1920" data-height="1080" data-duration="6">
+  <div class="mushroom-container">
+    <div class="mushroom"></div>
+  </div>
+</div>
+
+<script>
+// HyperFrames 要求：注册 timeline
+window.__timelines = window.__timelines || {};
+
+const duration = 6; // 总时长 6 秒
+const frameWidth = 64;
+const totalFrames = 10;
+const frameDuration = 0.06; // 每帧 60ms
+const cycles = Math.ceil(duration / (frameDuration * totalFrames));
+
+const tl = gsap.timeline({ paused: true });
+
+// 精灵图帧动画 - 使用 gsap.to 循环
+const mushroom = document.querySelector('.mushroom');
+const positions = [];
+for (let i = 0; i < totalFrames; i++) {
+  positions.push(-i * frameWidth * 4); // scale(4) 所以要乘4
+}
+
+// 使用 stagger 创建帧动画
+tl.to('.mushroom', {
+  backgroundPosition: `-640px 0`, // 10帧精灵图总宽度
+  duration: duration,
+  ease: `steps(${totalFrames})`
+}, 0);
+
+// 横向移动动画
+tl.to('.mushroom-container', {
+  left: 1920 + 150,
+  duration: duration,
+  ease: 'none'
+}, 0);
+
+// 注册 timeline
+window.__timelines['mushroom-run'] = tl;
+</script>
+
+</body>
+</html>

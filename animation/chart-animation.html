@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图表动画展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1200px;
+            height: 800px;
+            overflow: hidden;
+            background: transparent;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .chart-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-title {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInDown 0.8s ease-out forwards;
+        }
+
+        .chart-box:nth-child(1) .chart-title { animation-delay: 0.1s; }
+        .chart-box:nth-child(2) .chart-title { animation-delay: 0.2s; }
+        .chart-box:nth-child(3) .chart-title { animation-delay: 0.3s; }
+        .chart-box:nth-child(4) .chart-title { animation-delay: 0.4s; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== 柱状图 ========== */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            padding-top: 20px;
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar {
+            width: 50px;
+            border-radius: 8px 8px 0 0;
+            animation: growBar 1s ease-out forwards;
+            transform-origin: bottom;
+            position: relative;
+        }
+
+        .bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .bar-item:nth-child(1) .bar { height: 0; background: linear-gradient(to top, #667eea, #764ba2); animation-delay: 0.5s; }
+        .bar-item:nth-child(2) .bar { height: 0; background: linear-gradient(to top, #f093fb, #f5576c); animation-delay: 0.6s; }
+        .bar-item:nth-child(3) .bar { height: 0; background: linear-gradient(to top, #4facfe, #00f2fe); animation-delay: 0.7s; }
+        .bar-item:nth-child(4) .bar { height: 0; background: linear-gradient(to top, #43e97b, #38f9d7); animation-delay: 0.8s; }
+        .bar-item:nth-child(5) .bar { height: 0; background: linear-gradient(to top, #fa709a, #fee140); animation-delay: 0.9s; }
+
+        .bar-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        @keyframes growBar {
+            to { height: var(--height); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* ========== 环形图 ========== */
+        .donut-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .donut-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+
+        .donut-svg {
+            transform: rotate(-90deg);
+        }
+
+        .donut-segment {
+            fill: none;
+            stroke-width: 30;
+            stroke-linecap: round;
+            stroke-dasharray: 0 1000;
+            animation: drawDonut 1.5s ease-out forwards;
+        }
+
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .donut-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            opacity: 0;
+            animation: countUp 1s ease-out 1s forwards;
+        }
+
+        .donut-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        @keyframes drawDonut {
+            to { stroke-dasharray: var(--dash); }
+        }
+
+        @keyframes countUp {
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ========== 折线图 ========== */
+        .line-chart {
+            position: relative;
+            height: 200px;
+        }
+
+        .line-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease-out forwards;
+        }
+
+        .chart-area {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease-out forwards;
+        }
+
+        .chart-dot {
+            fill: #fff;
+            r: 6;
+            opacity: 0;
+            animation: popIn 0.3s ease-out forwards;
+        }
+
+        .chart-dot:nth-child(1) { animation-delay: 1s; }
+        .chart-dot:nth-child(2) { animation-delay: 1.2s; }
+        .chart-dot:nth-child(3) { animation-delay: 1.4s; }
+        .chart-dot:nth-child(4) { animation-delay: 1.6s; }
+        .chart-dot:nth-child(5) { animation-delay: 1.8s; }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes popIn {
+            to { opacity: 1; }
+        }
+
+        /* ========== 进度条 ========== */
+        .progress-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding-top: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            color: #fff;
+        }
+
+        .progress-name {
+            font-size: 16px;
+        }
+
+        .progress-value {
+            font-size: 16px;
+            font-weight: bold;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .progress-track {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            width: 0;
+            animation: fillProgress 1.5s ease-out forwards;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes fillProgress {
+            to { width: var(--width); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* 背景粒子 */
+        .bg-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: floatParticle 10s linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(800px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 柱状图 -->
+        <div class="chart-box">
+            <div class="chart-title">月度销售数据</div>
+            <div class="bar-chart">
+                <div class="bar-item">
+                    <div class="bar" style="--height: 120px;" data-value="120"></div>
+                    <span class="bar-label">1月</span>
+                </div>
+                <div class="bar-item">
+                    <div class="bar" style="--height: 150px;" data-value="150"></div>
+                    <span class="bar-label">2月</span>
+                </div>
+                <div class="bar-item">
+                    <div class="bar" style="--height: 90px;" data-value="90"></div>
+                    <span class="bar-label">3月</span>
+                </div>
+                <div class="bar-item">
+                    <div class="bar" style="--height: 150px;" data-value="150"></div>
+                    <span class="bar-label">4月</span>
+                </div>
+                <div class="bar-item">
+                    <div class="bar" style="--height: 200px;" data-value="200"></div>
+                    <span class="bar-label">5月</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 环形图 -->
+        <div class="chart-box">
+            <div class="chart-title">市场份额分布</div>
+            <div class="donut-chart">
+                <div class="donut-container">
+                    <svg class="donut-svg" viewBox="0 0 180 180">
+                        <circle class="donut-segment" cx="90" cy="90" r="70"
+                            stroke="#667eea" style="--dash: 220 440; animation-delay: 0.2s;"></circle>
+                        <circle class="donut-segment" cx="90" cy="90" r="70"
+                            stroke="#f5576c" style="--dash: 165 440; animation-delay: 0.4s;"></circle>
+                        <circle class="donut-segment" cx="90" cy="90" r="70"
+                            stroke="#4facfe" style="--dash: 110 440; animation-delay: 0.6s;"></circle>
+                        <circle class="donut-segment" cx="90" cy="90" r="70"
+                            stroke="#43e97b" style="--dash: 55 440; animation-delay: 0.8s;"></circle>
+                    </svg>
+                    <div class="donut-center">
+                        <div class="donut-value">100%</div>
+                        <div class="donut-label">总计</div>
+                    </div>
+                </div>
+                <div class="donut-legend">
+                    <div class="legend-item" style="animation-delay: 1s;">
+                        <div class="legend-color" style="background: #667eea;"></div>
+                        <span class="legend-text">产品A - 40%</span>
+                    </div>
+                    <div class="legend-item" style="animation-delay: 1.2s;">
+                        <div class="legend-color" style="background: #f5576c;"></div>
+                        <span class="legend-text">产品B - 30%</span>
+                    </div>
+                    <div class="legend-item" style="animation-delay: 1.4s;">
+                        <div class="legend-color" style="background: #4facfe;"></div>
+                        <span class="legend-text">产品C - 20%</span>
+                    </div>
+                    <div class="legend-item" style="animation-delay: 1.6s;">
+                        <div class="legend-color" style="background: #43e97b;"></div>
+                        <span class="legend-text">产品D - 10%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 折线图 -->
+        <div class="chart-box">
+            <div class="chart-title">用户增长趋势</div>
+            <div class="line-chart">
+                <svg viewBox="0 0 450 180" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="100%" stop-color="#764ba2"/>
+                        </linearGradient>
+                        <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="rgba(102, 126, 234, 0.3)"/>
+                            <stop offset="100%" stop-color="rgba(102, 126, 234, 0)"/>
+                        </linearGradient>
+                    </defs>
+                    <path class="chart-area"
+                        d="M 30 150 L 120 120 L 210 90 L 300 100 L 390 40 L 390 150 Z"
+                        fill="url(#areaGradient)"
+                        style="animation-delay: 0.3s;"/>
+                    <path class="chart-line"
+                        d="M 30 150 L 120 120 L 210 90 L 300 100 L 390 40"
+                        stroke="url(#lineGradient)"/>
+                    <circle class="chart-dot" cx="30" cy="150"/>
+                    <circle class="chart-dot" cx="120" cy="120"/>
+                    <circle class="chart-dot" cx="210" cy="90"/>
+                    <circle class="chart-dot" cx="300" cy="100"/>
+                    <circle class="chart-dot" cx="390" cy="40"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 进度条 -->
+        <div class="chart-box">
+            <div class="chart-title">项目完成进度</div>
+            <div class="progress-chart">
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-name">前端开发</span>
+                        <span class="progress-value" style="animation-delay: 1.5s;">85%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="--width: 85%; background: linear-gradient(90deg, #667eea, #764ba2); animation-delay: 0.2s;"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-name">后端开发</span>
+                        <span class="progress-value" style="animation-delay: 1.7s;">72%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="--width: 72%; background: linear-gradient(90deg, #f093fb, #f5576c); animation-delay: 0.4s;"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-name">UI设计</span>
+                        <span class="progress-value" style="animation-delay: 1.9s;">95%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="--width: 95%; background: linear-gradient(90deg, #4facfe, #00f2fe); animation-delay: 0.6s;"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-name">测试部署</span>
+                        <span class="progress-value" style="animation-delay: 2.1s;">60%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="--width: 60%; background: linear-gradient(90deg, #43e97b, #38f9d7); animation-delay: 0.8s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 背景粒子 -->
+    <script>
+        // 创建背景粒子
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'bg-particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+            document.body.appendChild(particle);
+        }
+
+        // 暴露给 Puppeteer 控制的接口
+        window.seekTo = function(time) {
+            document.body.style.display = 'none';
+            document.body.offsetHeight;
+            document.body.style.display = 'block';
+
+            const style = document.createElement('style');
+            style.textContent = `* { animation-delay: -${time}s !important; }`;
+            document.head.appendChild(style);
+
+            return time;
+        };
+
+        window.getTotalDuration = function() {
+            return 3;
+        };
+
+        console.log('Chart Animation loaded. Total duration: 3s');
+    </script>
+</body>
+</html>
